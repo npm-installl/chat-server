@@ -61,7 +61,6 @@ app.use(cors({
 // Handle socket connections
 io.on('connection', (socket) => {
     console.log('New client connected');
-
     // Join a room
     socket.on('joinRoom', (room) => {
         socket.join(room);
