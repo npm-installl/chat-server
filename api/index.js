@@ -18,8 +18,7 @@ const io = socketIo(server, {
 
 app.use(cors({
     origin: process.env.ORIGIN, // Use the origin from the environment variable
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type']
+    methods: ['GET', 'POST']
 }));
 
 // Load environment variables from .env file
