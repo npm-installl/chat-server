@@ -9,6 +9,18 @@ const cors = require('cors');
 const app = express();
 const server = http.createServer(app);
 app.use(bodyParser.json());
+const io = socketIo(server, {
+    cors: {
+        origin: process.env.ORIGIN, // Use the origin from the environment variable
+        methods: ['GET', 'POST']
+    }
+});
+
+app.use(cors({
+    origin: process.env.ORIGIN, // Use the origin from the environment variable
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type']
+}));
 
 // Load environment variables from .env file
 const env = process.env.NODE_ENV;
@@ -44,19 +56,6 @@ pool.query(`
     timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
 `);
-
-const io = socketIo(server, {
-    cors: {
-        origin: origin, // Use the origin from the environment variable
-        methods: ['GET', 'POST']
-    }
-});
-
-app.use(cors({
-    origin: origin, // Use the origin from the environment variable
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type']
-}));
 
 // Handle socket connections
 io.on('connection', (socket) => {
