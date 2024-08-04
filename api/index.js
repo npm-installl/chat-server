@@ -9,6 +9,7 @@ const cors = require('cors');
 const app = express();
 const server = http.createServer(app);
 app.use(bodyParser.json());
+console.log("this is origin ==>",process.env.ORIGIN)
 const io = socketIo(server, {
     cors: {
         origin: process.env.ORIGIN, // Use the origin from the environment variable
