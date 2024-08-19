@@ -96,5 +96,11 @@ app.get('/messages', (req, res) => {
         })
         .catch(err => console.error(err));
 });
-
+app.get('/getAllRoom', (req, res) => {
+    pool.query(`SELECT DISTINCT room FROM messages`)
+        .then(result => {
+            res.json(result.rows);
+        })
+        .catch(err => console.error(err));
+});
 server.listen(port, () => console.log(`Server running on port ${port}`));
