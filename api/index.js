@@ -78,7 +78,7 @@ io.on('connection', (socket) => {
     // Send message
     socket.on('sendMessage', (data) => {
         console.log(data)
-        pool.query(`INSERT INTO messages (room, message,user,isSent) VALUES ($1, $2, $3, $4) RETURNING *`, [data.room, data.message, data.user, data.isSent])
+        pool.query(`INSERT INTO messages (room, message,isSent,users) VALUES ($1, $2, $3, $4) RETURNING *`, [data.room, data.message, data.isSent, data.user])
             .then(result => {
                 io.to(data.room).emit('receiveMessage', result.rows[0]);
             })
