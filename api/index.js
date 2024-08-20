@@ -53,6 +53,8 @@ pool.query(`
     id SERIAL PRIMARY KEY,
     room VARCHAR(255) NOT NULL,
     message TEXT NOT NULL,
+    isSent BOOLEAN NOT NULL,
+    user VARCHAR(255) NOT NULL,
     timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
 `);
@@ -75,7 +77,8 @@ io.on('connection', (socket) => {
 
     // Send message
     socket.on('sendMessage', (data) => {
-        pool.query(`INSERT INTO messages (room, message) VALUES ($1, $2) RETURNING *`, [data.room, data.message])
+        console.log(data)
+        pool.query(`INSERT INTO messages (room, message,user,isSent) VALUES ($1, $2, $3, $4) RETURNING *`, [data.room, data.message, data.user, data.isSent])
             .then(result => {
                 io.to(data.room).emit('receiveMessage', result.rows[0]);
             })
