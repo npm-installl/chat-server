@@ -54,7 +54,7 @@ pool.query(`
     room VARCHAR(255) NOT NULL,
     message TEXT NOT NULL,
     isSent BOOLEAN NOT NULL,
-    user VARCHAR(255) NOT NULL,
+    users VARCHAR(255) NOT NULL,
     timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
 `);
