@@ -70,7 +70,7 @@ io.on('connection', (socket) => {
         // Load message history
         pool.query(`SELECT * FROM messages WHERE room = $1 ORDER BY timestamp ASC`, [room])
             .then(result => {
-                socket.emit('loadMessages', result.rows);
+                io.emit('loadMessages', result.rows);
             })
             .catch(err => console.error(err));
     });
