@@ -59,7 +59,7 @@ pool.query(`
   );
 `);
 
-// Handle socket connections
+
 io.on('connection', (socket) => {
     console.log('New client connected');
     // Join a room
@@ -70,7 +70,7 @@ io.on('connection', (socket) => {
         // Load message history
         pool.query(`SELECT * FROM messages WHERE room = $1 ORDER BY timestamp ASC`, [room])
             .then(result => {
-                io.emit('loadMessages', result.rows);
+                io.to(room).emit('loadMessages', result.rows);
             })
             .catch(err => console.error(err));
     });
@@ -80,13 +80,14 @@ io.on('connection', (socket) => {
         console.log(data)
         pool.query(`INSERT INTO messages (room, message,isSent,users) VALUES ($1, $2, $3, $4) RETURNING *`, [data.room, data.message, data.isSent, data.user])
             .then(result => {
+                console.log("message added...")
                 io.to(data.room).emit('receiveMessage', result.rows[0]);
             })
             .catch(err => console.error(err));
     });
 
     socket.on('disconnect', () => {
-        console.log('Client disconnected');
+        console.log('Client disconnected',socket.rooms);
     });
 });
 
@@ -106,4 +107,55 @@ app.get('/getAllRoom', (req, res) => {
         })
         .catch(err => console.error(err));
 });
+
+
+
+// Handle socket connections
+// io.on('connection', (socket) => {
+//     console.log('New client connected');
+//     // Join a room
+//     socket.on('joinRoom', (room) => {
+//         socket.join(room);
+//         console.log(`Client joined room: ${room}`);
+
+//         // Load message history
+//         pool.query(`SELECT * FROM messages WHERE room = $1 ORDER BY timestamp ASC`, [room])
+//             .then(result => {
+//                 io.emit('loadMessages', result.rows);
+//             })
+//             .catch(err => console.error(err));
+//     });
+
+//     // Send message
+//     socket.on('sendMessage', (data) => {
+//         console.log(data)
+//         pool.query(`INSERT INTO messages (room, message,isSent,users) VALUES ($1, $2, $3, $4) RETURNING *`, [data.room, data.message, data.isSent, data.user])
+//             .then(result => {
+//                 io.to(data.room).emit('receiveMessage', result.rows[0]);
+//             })
+//             .catch(err => console.error(err));
+//     });
+
+//     socket.on('disconnect', () => {
+//         console.log('Client disconnected');
+//     });
+// });
+
+// // Get all messages
+// app.get('/messages', (req, res) => {
+//     const room = req.query.room;
+//     pool.query(`SELECT * FROM messages WHERE room = $1 ORDER BY timestamp ASC`, [room])
+//         .then(result => {
+//             res.json(result.rows);
+//         })
+//         .catch(err => console.error(err));
+// });
+// app.get('/getAllRoom', (req, res) => {
+//     pool.query(`SELECT DISTINCT room FROM messages`)
+//         .then(result => {
+//             res.json(result.rows);
+//         })
+//         .catch(err => console.error(err));
+// });
+
 server.listen(port, () => console.log(`Server running on port ${port}`));
