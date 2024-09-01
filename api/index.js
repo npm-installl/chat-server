@@ -77,13 +77,14 @@ io.on('connection', (socket) => {
 
     // Send message
     socket.on('sendMessage', (data) => {
-        console.log(data)
-        pool.query(`INSERT INTO messages (room, message,isSent,users) VALUES ($1, $2, $3, $4) RETURNING *`, [data.room, data.message, data.isSent, data.user])
-            .then(result => {
-                console.log("message added...")
-                io.to(data.room).emit('receiveMessage', result.rows[0]);
-            })
-            .catch(err => console.error(err));
+        console.log("comming message - ",data)
+        io.to(data.room).emit('message', data);
+        // pool.query(`INSERT INTO messages (room, message,isSent,users) VALUES ($1, $2, $3, $4) RETURNING *`, [data.room, data.message, data.isSent, data.user])
+        //     .then(result => {
+        //         console.log("message added...")
+        //         io.to(data.room).emit('receiveMessage', result.rows[0]);
+        //     })
+        //     .catch(err => console.error(err));
     });
 
     socket.on('disconnect', () => {
